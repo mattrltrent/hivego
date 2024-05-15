@@ -42,6 +42,23 @@ func (h *HiveRpcNode) BroadcastJson(reqAuth []string, reqPostAuth []string, id s
 	return h.broadcast([]hiveOperation{op}, wif)
 }
 
+type claimRewardOperation struct {
+	Account     string `json:"account"`
+	RewardHBD   string `json:"reward_hbd"`
+	RewardHIVE  string `json:"reward_hive"`
+	RewardVests string `json:"reward_vests"`
+	opText      string
+}
+
+func (o claimRewardOperation) opName() string {
+	return o.opText
+}
+
+func (h *HiveRpcNode) ClaimRewards(Account string, RewardHBD string, RewardHIVE string, RewardVests string, wif *string) (string, error) {
+	op := claimRewardOperation{Account, RewardHBD, RewardHIVE, RewardVests, "claim_reward_balance"}
+	return h.broadcast([]hiveOperation{op}, wif)
+}
+
 func getHiveChainId() []byte {
 	cid, _ := hex.DecodeString("beeab0de00000000000000000000000000000000000000000000000000000000")
 	return cid

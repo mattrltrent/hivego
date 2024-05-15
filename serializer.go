@@ -116,3 +116,14 @@ func (o customJsonOperation) serializeOp() ([]byte, error) {
 
 	return jBuf.Bytes(), nil
 }
+
+func (o claimRewardOperation) serializeOp() ([]byte, error) {
+	var claimBuf bytes.Buffer
+	claimBuf.Write([]byte{opIdB(o.opText)})
+	appendVString(o.Account, &claimBuf)
+	appendVString(o.RewardHBD, &claimBuf)
+	appendVString(o.RewardHIVE, &claimBuf)
+	appendVString(o.RewardVests, &claimBuf)
+
+	return claimBuf.Bytes(), nil
+}
