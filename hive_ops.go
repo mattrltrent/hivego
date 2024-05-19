@@ -1,6 +1,8 @@
 package hivego
 
-import "encoding/hex"
+import (
+	"encoding/hex"
+)
 
 type hiveOperation interface {
 	serializeOp() ([]byte, error)
@@ -54,9 +56,21 @@ func (o claimRewardOperation) opName() string {
 	return o.opText
 }
 
-func (h *HiveRpcNode) ClaimRewards(Account string, RewardHBD string, RewardHIVE string, RewardVests string, wif *string) (string, error) {
-	op := claimRewardOperation{Account, RewardHBD, RewardHIVE, RewardVests, "claim_reward_balance"}
-	return h.broadcast([]hiveOperation{op}, wif)
+func (h *HiveRpcNode) ClaimRewards(Account string, wif *string) (string, error) {
+	accountData, err := h.GetAccount([]string{Account})
+
+	if err != nil {
+		return "", err
+	}
+
+	for _, accounts := range accountData {
+		claim := claimRewardOperation{Account, accounts.RewardHbdBalance, accounts.RewardHiveBalance, accounts.RewardVestingBalance, "claim_reward_balance"}
+		broadcast, err := h.broadcast([]hiveOperation{claim}, wif)
+		return broadcast, err
+	}
+
+	return "", nil
+
 }
 
 func getHiveChainId() []byte {

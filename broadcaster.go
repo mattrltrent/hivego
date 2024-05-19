@@ -2,6 +2,8 @@ package hivego
 
 import (
 	"encoding/hex"
+	"encoding/json"
+	"log"
 )
 
 type hiveTransaction struct {
@@ -36,6 +38,7 @@ func (t *hiveTransaction) prepareJson() {
 		t.Extensions = []string{}
 	}
 	t.OperationsJs = opsContainer
+
 }
 
 func (h *HiveRpcNode) broadcast(ops []hiveOperation, wif *string) (string, error) {
@@ -66,12 +69,16 @@ func (h *HiveRpcNode) broadcast(ops []hiveOperation, wif *string) (string, error
 
 	tx.prepareJson()
 
+	txJson, err := json.MarshalIndent(tx, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	log.Println("Broadcasting transaction:", string(txJson))
+
 	var params []interface{}
 	params = append(params, tx)
-
 	if !h.NoBroadcast {
 		q := hrpcQuery{"condenser_api.broadcast_transaction", params}
-
 		res, err := h.rpcExec(h.address, q)
 		if err != nil {
 			return string(res), err
