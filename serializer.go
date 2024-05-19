@@ -3,6 +3,10 @@ package hivego
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
+	"math"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -58,6 +62,60 @@ func appendVStringArray(a []string, b *bytes.Buffer) *bytes.Buffer {
 		appendVString(s, b)
 	}
 	return b
+}
+
+func appendVAsset(asset string, b *bytes.Buffer) error {
+	parts := strings.Split(asset, " ")
+	if len(parts) != 2 {
+		return errors.New("invalid asset format: " + asset)
+	}
+
+	amountStr, symbol := parts[0], parts[1]
+
+	// all tokens have precision 3 except for VESTS
+	precision := 3
+
+	if symbol == "VESTS" {
+		precision = 6
+	}
+
+	// convert to their old names for compatibility
+	switch symbol {
+	case "HIVE":
+		symbol = "STEEM"
+	case "HBD":
+		symbol = "SBD"
+	}
+
+	// convert to float and multiply by 10^precision
+	amount, err := strconv.ParseFloat(amountStr, 64)
+
+	if err != nil {
+		return err
+	}
+
+	amount = amount * math.Pow10(precision)
+
+	// write the amount as int64
+	err = binary.Write(b, binary.LittleEndian, int64(amount))
+
+	if err != nil {
+		return err
+	}
+
+	// write the precision
+	b.WriteByte(byte(precision))
+
+	// write the symbol NUL padded to 8 bits
+	for i := 0; i < 7; i++ {
+		if i < len(symbol) {
+			b.WriteByte(symbol[i])
+		} else {
+			b.WriteByte(byte(0))
+		}
+	}
+
+	return nil
 }
 
 func serializeTx(tx hiveTransaction) ([]byte, error) {
@@ -121,9 +179,23 @@ func (o claimRewardOperation) serializeOp() ([]byte, error) {
 	var claimBuf bytes.Buffer
 	claimBuf.Write([]byte{opIdB(o.opText)})
 	appendVString(o.Account, &claimBuf)
-	appendVString(o.RewardHBD, &claimBuf)
-	appendVString(o.RewardHIVE, &claimBuf)
-	appendVString(o.RewardVests, &claimBuf)
+	err := appendVAsset(o.RewardHIVE, &claimBuf)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = appendVAsset(o.RewardHBD, &claimBuf)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = appendVAsset(o.RewardVests, &claimBuf)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return claimBuf.Bytes(), nil
 }
