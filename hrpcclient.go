@@ -28,7 +28,7 @@ type hrpcQuery struct {
 }
 
 func NewHiveRpc(addr string) *HiveRpcNode {
-	return NewHiveRpcWithOpts(addr, 1, 4)
+	return NewHiveRpcWithOpts(addr, 1, 1)
 }
 
 func NewHiveRpcWithOpts(addr string, maxConn int, maxBatch int) *HiveRpcNode {

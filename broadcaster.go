@@ -2,8 +2,6 @@ package hivego
 
 import (
 	"encoding/hex"
-	"encoding/json"
-	"log"
 )
 
 type hiveTransaction struct {
@@ -68,12 +66,6 @@ func (h *HiveRpcNode) broadcast(ops []hiveOperation, wif *string) (string, error
 	tx.Signatures = append(tx.Signatures, hex.EncodeToString(sig))
 
 	tx.prepareJson()
-
-	txJson, err := json.MarshalIndent(tx, "", "  ")
-	if err != nil {
-		return "", err
-	}
-	log.Println("Broadcasting transaction:", string(txJson))
 
 	var params []interface{}
 	params = append(params, tx)
