@@ -1,9 +1,7 @@
 package hivego
 
 import (
-	"encoding/json"
 	"errors"
-	"log"
 	"strconv"
 
 	"github.com/cfoxon/jsonrpc2client"
@@ -60,34 +58,6 @@ func (h *HiveRpcNode) rpcExec(endpoint string, query hrpcQuery) ([]byte, error) 
 	}
 
 	return resp.Result, nil
-}
-
-func (h *HiveRpcNode) rpcExecBatch(endpoint string, queries []hrpcQuery) ([]json.RawMessage, error) {
-	rpcClient := jsonrpc2client.NewClientWithOpts(endpoint, h.MaxConn, h.MaxBatch)
-
-	var jr2queries jsonrpc2client.RPCRequests
-	for i, query := range queries {
-		jr2query := &jsonrpc2client.RpcRequest{Method: query.method, JsonRpc: "2.0", Id: i, Params: query.params}
-		jr2queries = append(jr2queries, jr2query)
-	}
-
-	resps, err := rpcClient.CallBatchRaw(jr2queries)
-	if err != nil {
-		return nil, err
-	}
-
-	var batchResult []json.RawMessage
-	for _, resp := range resps {
-		thisResult := json.RawMessage{}
-		if err := json.Unmarshal(resp.Result, &thisResult); err != nil {
-			log.Println("err unmarshalling res.result")
-			log.Println(err)
-			log.Println(resp)
-		}
-		batchResult = append(batchResult, thisResult)
-	}
-
-	return batchResult, nil
 }
 
 func (h *HiveRpcNode) rpcExecBatchFast(endpoint string, queries []hrpcQuery) ([][]byte, error) {

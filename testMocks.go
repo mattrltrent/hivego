@@ -41,11 +41,3 @@ func getTestTx(ops []hiveOperation) hiveTransaction {
 func getTestVoteTx() hiveTransaction {
 	return getTestTx([]hiveOperation{getTestVoteOp()})
 }
-
-func getTestCustomJsonTx() hiveTransaction {
-	return getTestTx([]hiveOperation{getTestCustomJsonOp()})
-}
-
-func getTestMultipleOpsTx() hiveTransaction {
-	return getTestTx(getTwoTestOps())
-}
