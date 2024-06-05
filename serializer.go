@@ -199,3 +199,14 @@ func (o claimRewardOperation) serializeOp() ([]byte, error) {
 
 	return claimBuf.Bytes(), nil
 }
+
+func (o transferOperation) serializeOp() ([]byte, error) {
+	var transferBuf bytes.Buffer
+	transferBuf.Write([]byte{opIdB(o.opText)})
+	appendVString(o.From, &transferBuf)
+	appendVString(o.To, &transferBuf)
+	appendVAsset(o.Amount, &transferBuf)
+	appendVString(o.Memo, &transferBuf)
+
+	return transferBuf.Bytes(), nil
+}

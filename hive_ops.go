@@ -73,6 +73,24 @@ func (h *HiveRpcNode) ClaimRewards(Account string, wif *string) (string, error) 
 
 }
 
+type transferOperation struct {
+	From   string `json:"from"`
+	To     string `json:"to"`
+	Amount string `json:"amount"`
+	Memo   string `json:"memo"`
+	opText string
+}
+
+func (o transferOperation) opName() string {
+	return o.opText
+}
+
+func (h *HiveRpcNode) Transfer(from string, to string, amount string, memo string, wif *string) (string, error) {
+	transfer := transferOperation{from, to, amount, memo, "transfer"}
+
+	return h.broadcast([]hiveOperation{transfer}, wif)
+}
+
 func getHiveChainId() []byte {
 	cid, _ := hex.DecodeString("beeab0de00000000000000000000000000000000000000000000000000000000")
 	return cid
