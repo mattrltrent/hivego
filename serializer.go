@@ -37,7 +37,7 @@ func expTimeB(expTime string) ([]byte, error) {
 	return buf, nil
 }
 
-func countOpsB(ops []hiveOperation) []byte {
+func countOpsB(ops []HiveOperation) []byte {
 	b := make([]byte, 5)
 	l := binary.PutUvarint(b, uint64(len(ops)))
 	return b[0:l]
@@ -137,11 +137,11 @@ func serializeTx(tx hiveTransaction) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func serializeOps(ops []hiveOperation) ([]byte, error) {
+func serializeOps(ops []HiveOperation) ([]byte, error) {
 	var opsBuf bytes.Buffer
 	opsBuf.Write(countOpsB(ops))
 	for _, op := range ops {
-		b, err := op.serializeOp()
+		b, err := op.SerializeOp()
 		if err != nil {
 			return nil, err
 		}
@@ -150,7 +150,7 @@ func serializeOps(ops []hiveOperation) ([]byte, error) {
 	return opsBuf.Bytes(), nil
 }
 
-func (o voteOperation) serializeOp() ([]byte, error) {
+func (o voteOperation) SerializeOp() ([]byte, error) {
 	var voteBuf bytes.Buffer
 	voteBuf.Write([]byte{opIdB(o.opText)})
 	appendVString(o.Voter, &voteBuf)
@@ -164,7 +164,7 @@ func (o voteOperation) serializeOp() ([]byte, error) {
 	return voteBuf.Bytes(), nil
 }
 
-func (o customJsonOperation) serializeOp() ([]byte, error) {
+func (o customJsonOperation) SerializeOp() ([]byte, error) {
 	var jBuf bytes.Buffer
 	jBuf.Write([]byte{opIdB(o.opText)})
 	appendVStringArray(o.RequiredAuths, &jBuf)
@@ -175,7 +175,7 @@ func (o customJsonOperation) serializeOp() ([]byte, error) {
 	return jBuf.Bytes(), nil
 }
 
-func (o claimRewardOperation) serializeOp() ([]byte, error) {
+func (o claimRewardOperation) SerializeOp() ([]byte, error) {
 	var claimBuf bytes.Buffer
 	claimBuf.Write([]byte{opIdB(o.opText)})
 	appendVString(o.Account, &claimBuf)
@@ -200,7 +200,7 @@ func (o claimRewardOperation) serializeOp() ([]byte, error) {
 	return claimBuf.Bytes(), nil
 }
 
-func (o transferOperation) serializeOp() ([]byte, error) {
+func (o transferOperation) SerializeOp() ([]byte, error) {
 	var transferBuf bytes.Buffer
 	transferBuf.Write([]byte{opIdB(o.opText)})
 	appendVString(o.From, &transferBuf)

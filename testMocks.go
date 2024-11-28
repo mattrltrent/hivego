@@ -2,7 +2,7 @@ package hivego
 
 import "time"
 
-func getTestVoteOp() hiveOperation {
+func getTestVoteOp() HiveOperation {
 	return voteOperation{
 		Voter:    "xeroc",
 		Author:   "xeroc",
@@ -12,7 +12,7 @@ func getTestVoteOp() hiveOperation {
 	}
 }
 
-func getTestCustomJsonOp() hiveOperation {
+func getTestCustomJsonOp() HiveOperation {
 	return customJsonOperation{
 		RequiredAuths:        []string{},
 		RequiredPostingAuths: []string{"xeroc"},
@@ -22,11 +22,11 @@ func getTestCustomJsonOp() hiveOperation {
 	}
 }
 
-func getTwoTestOps() []hiveOperation {
-	return []hiveOperation{getTestVoteOp(), getTestCustomJsonOp()}
+func getTwoTestOps() []HiveOperation {
+	return []HiveOperation{getTestVoteOp(), getTestCustomJsonOp()}
 }
 
-func getTestTx(ops []hiveOperation) hiveTransaction {
+func getTestTx(ops []HiveOperation) hiveTransaction {
 	exp, _ := time.Parse("2006-01-02T15:04:05", "2016-08-08T12:24:17")
 	expStr := exp.Format("2006-01-02T15:04:05")
 
@@ -39,5 +39,5 @@ func getTestTx(ops []hiveOperation) hiveTransaction {
 }
 
 func getTestVoteTx() hiveTransaction {
-	return getTestTx([]hiveOperation{getTestVoteOp()})
+	return getTestTx([]HiveOperation{getTestVoteOp()})
 }

@@ -8,7 +8,7 @@ type hiveTransaction struct {
 	RefBlockNum    uint16           `json:"ref_block_num"`
 	RefBlockPrefix uint32           `json:"ref_block_prefix"`
 	Expiration     string           `json:"expiration"`
-	Operations     []hiveOperation  `json:"-"`
+	Operations     []HiveOperation  `json:"-"`
 	OperationsJs   [][2]interface{} `json:"operations"`
 	Extensions     []string         `json:"extensions"`
 	Signatures     []string         `json:"signatures"`
@@ -28,7 +28,7 @@ func (t *hiveTransaction) prepareJson() {
 	var opsContainer [][2]interface{}
 	for _, op := range t.Operations {
 		var opContainer [2]interface{}
-		opContainer[0] = op.opName()
+		opContainer[0] = op.OpName()
 		opContainer[1] = op
 		opsContainer = append(opsContainer, opContainer)
 	}
@@ -39,7 +39,7 @@ func (t *hiveTransaction) prepareJson() {
 
 }
 
-func (h *HiveRpcNode) Broadcast(ops []hiveOperation, wif *string) (string, error) {
+func (h *HiveRpcNode) Broadcast(ops []HiveOperation, wif *string) (string, error) {
 	signingData, err := h.getSigningData()
 	if err != nil {
 		return "", err

@@ -4,9 +4,9 @@ import (
 	"encoding/hex"
 )
 
-type hiveOperation interface {
-	serializeOp() ([]byte, error)
-	opName() string
+type HiveOperation interface {
+	SerializeOp() ([]byte, error)
+	OpName() string
 }
 
 type voteOperation struct {
@@ -17,14 +17,14 @@ type voteOperation struct {
 	opText   string
 }
 
-func (o voteOperation) opName() string {
+func (o voteOperation) OpName() string {
 	return o.opText
 }
 
 func (h *HiveRpcNode) VotePost(voter string, author string, permlink string, weight int, wif *string) (string, error) {
 	vote := voteOperation{voter, author, permlink, int16(weight), "vote"}
 
-	return h.Broadcast([]hiveOperation{vote}, wif)
+	return h.Broadcast([]HiveOperation{vote}, wif)
 }
 
 type customJsonOperation struct {
@@ -35,13 +35,13 @@ type customJsonOperation struct {
 	opText               string
 }
 
-func (o customJsonOperation) opName() string {
+func (o customJsonOperation) OpName() string {
 	return o.opText
 }
 
 func (h *HiveRpcNode) BroadcastJson(reqAuth []string, reqPostAuth []string, id string, cj string, wif *string) (string, error) {
 	op := customJsonOperation{reqAuth, reqPostAuth, id, cj, "custom_json"}
-	return h.Broadcast([]hiveOperation{op}, wif)
+	return h.Broadcast([]HiveOperation{op}, wif)
 }
 
 type claimRewardOperation struct {
@@ -52,7 +52,7 @@ type claimRewardOperation struct {
 	opText      string
 }
 
-func (o claimRewardOperation) opName() string {
+func (o claimRewardOperation) OpName() string {
 	return o.opText
 }
 
@@ -65,7 +65,7 @@ func (h *HiveRpcNode) ClaimRewards(Account string, wif *string) (string, error) 
 
 	for _, accounts := range accountData {
 		claim := claimRewardOperation{Account, accounts.RewardHbdBalance, accounts.RewardHiveBalance, accounts.RewardVestingBalance, "claim_reward_balance"}
-		broadcast, err := h.Broadcast([]hiveOperation{claim}, wif)
+		broadcast, err := h.Broadcast([]HiveOperation{claim}, wif)
 		return broadcast, err
 	}
 
@@ -81,14 +81,14 @@ type transferOperation struct {
 	opText string
 }
 
-func (o transferOperation) opName() string {
+func (o transferOperation) OpName() string {
 	return o.opText
 }
 
 func (h *HiveRpcNode) Transfer(from string, to string, amount string, memo string, wif *string) (string, error) {
 	transfer := transferOperation{from, to, amount, memo, "transfer"}
 
-	return h.Broadcast([]hiveOperation{transfer}, wif)
+	return h.Broadcast([]HiveOperation{transfer}, wif)
 }
 
 func getHiveChainId() []byte {
