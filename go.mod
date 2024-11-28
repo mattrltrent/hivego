@@ -1,4 +1,4 @@
-module github.com/vsc-eco/hivego
+module github.com/mattrltrent/hivego
 
 go 1.17
 
