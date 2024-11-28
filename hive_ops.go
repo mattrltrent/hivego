@@ -24,7 +24,7 @@ func (o voteOperation) opName() string {
 func (h *HiveRpcNode) VotePost(voter string, author string, permlink string, weight int, wif *string) (string, error) {
 	vote := voteOperation{voter, author, permlink, int16(weight), "vote"}
 
-	return h.broadcast([]hiveOperation{vote}, wif)
+	return h.Broadcast([]hiveOperation{vote}, wif)
 }
 
 type customJsonOperation struct {
@@ -41,7 +41,7 @@ func (o customJsonOperation) opName() string {
 
 func (h *HiveRpcNode) BroadcastJson(reqAuth []string, reqPostAuth []string, id string, cj string, wif *string) (string, error) {
 	op := customJsonOperation{reqAuth, reqPostAuth, id, cj, "custom_json"}
-	return h.broadcast([]hiveOperation{op}, wif)
+	return h.Broadcast([]hiveOperation{op}, wif)
 }
 
 type claimRewardOperation struct {
@@ -65,7 +65,7 @@ func (h *HiveRpcNode) ClaimRewards(Account string, wif *string) (string, error) 
 
 	for _, accounts := range accountData {
 		claim := claimRewardOperation{Account, accounts.RewardHbdBalance, accounts.RewardHiveBalance, accounts.RewardVestingBalance, "claim_reward_balance"}
-		broadcast, err := h.broadcast([]hiveOperation{claim}, wif)
+		broadcast, err := h.Broadcast([]hiveOperation{claim}, wif)
 		return broadcast, err
 	}
 
@@ -88,7 +88,7 @@ func (o transferOperation) opName() string {
 func (h *HiveRpcNode) Transfer(from string, to string, amount string, memo string, wif *string) (string, error) {
 	transfer := transferOperation{from, to, amount, memo, "transfer"}
 
-	return h.broadcast([]hiveOperation{transfer}, wif)
+	return h.Broadcast([]hiveOperation{transfer}, wif)
 }
 
 func getHiveChainId() []byte {

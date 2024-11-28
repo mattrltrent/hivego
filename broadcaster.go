@@ -39,7 +39,7 @@ func (t *hiveTransaction) prepareJson() {
 
 }
 
-func (h *HiveRpcNode) broadcast(ops []hiveOperation, wif *string) (string, error) {
+func (h *HiveRpcNode) Broadcast(ops []hiveOperation, wif *string) (string, error) {
 	signingData, err := h.getSigningData()
 	if err != nil {
 		return "", err
