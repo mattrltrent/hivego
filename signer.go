@@ -42,7 +42,7 @@ func (h *HiveRpcNode) getSigningData() (signingDataFromChain, error) {
 	if err != nil {
 		return signingDataFromChain{}, err
 	}
-	exp = exp.Add(300 * time.Second)
+	exp = exp.Add(30 * time.Second)
 	expStr := exp.Format("2006-01-02T15:04:05")
 
 	signingData := signingDataFromChain{refBlockNum, refBlockPrefix, expStr}
