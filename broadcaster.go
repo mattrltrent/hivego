@@ -36,7 +36,6 @@ func (t *hiveTransaction) prepareJson() {
 		t.Extensions = []string{}
 	}
 	t.OperationsJs = opsContainer
-
 }
 
 func (h *HiveRpcNode) Broadcast(ops []HiveOperation, wif *string) (string, error) {
@@ -52,12 +51,17 @@ func (h *HiveRpcNode) Broadcast(ops []HiveOperation, wif *string) (string, error
 	}
 
 	message, err := serializeTx(tx)
+
 	if err != nil {
 		return "", err
 	}
 
 	digest := hashTxForSig(message)
-	txId, _ := tx.generateTrxId()
+
+	txId, err := tx.generateTrxId()
+	if err != nil {
+		return "", err
+	}
 	sig, err := SignDigest(digest, wif)
 	if err != nil {
 		return "", err

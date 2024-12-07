@@ -22,6 +22,18 @@ func getTestCustomJsonOp() HiveOperation {
 	}
 }
 
+func getTestAccountUpdateOp() HiveOperation {
+	return accountUpdateOperation{
+		Account:      "sniperduel17",
+		Owner:        nil,
+		Active:       nil,
+		Posting:      nil,
+		MemoKey:      "STM6n4WcwyiC63udKYR8jDFuzG9T48dhy2Qb5sVmQ9MyNuKM7xE29",
+		JsonMetadata: "{\"foo\":\"bar\"}",
+		opText:       "account_update",
+	}
+}
+
 func getTwoTestOps() []HiveOperation {
 	return []HiveOperation{getTestVoteOp(), getTestCustomJsonOp()}
 }

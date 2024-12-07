@@ -2,6 +2,7 @@ package hivego
 
 import (
 	"encoding/hex"
+	"fmt"
 )
 
 type HiveOperation interface {
@@ -25,6 +26,59 @@ func (h *HiveRpcNode) VotePost(voter string, author string, permlink string, wei
 	vote := voteOperation{voter, author, permlink, int16(weight), "vote"}
 
 	return h.Broadcast([]HiveOperation{vote}, wif)
+}
+
+type Auths struct {
+	WeightThreshold int              `json:"weight_threshold"`
+	AccountAuths    [][2]interface{} `json:"account_auths"` // tuple (string, int)
+	KeyAuths        [][2]interface{} `json:"key_auths"`     // tuple (string, int)
+}
+
+// ref: https://developers.hive.io/apidefinitions/#broadcast_ops_account_update
+type accountUpdateOperation struct {
+	Account string `json:"account"`
+
+	// optional: auths
+	Owner   *Auths `json:"owner"`
+	Active  *Auths `json:"active"`
+	Posting *Auths `json:"posting"`
+
+	MemoKey      string `json:"memo_key"`
+	JsonMetadata string `json:"json_metadata"`
+
+	// special (not serialized, used to determine operation ID number)
+	opText string
+}
+
+func (o accountUpdateOperation) OpName() string {
+	return o.opText
+}
+
+func (h *HiveRpcNode) UpdateAccount(
+	account string,
+	owner *Auths,
+	active *Auths,
+	posting *Auths,
+	jsonMetadata string,
+	memoKey string,
+	wif *string,
+) (string, error) {
+
+	if owner != nil || active != nil || posting != nil {
+		return "", fmt.Errorf("owner, active, posting are not supported or tested yet")
+	}
+
+	op := accountUpdateOperation{
+		Account:      account,
+		Owner:        owner,
+		Active:       active,
+		Posting:      posting,
+		MemoKey:      memoKey,
+		JsonMetadata: jsonMetadata,
+		opText:       "account_update",
+	}
+
+	return h.Broadcast([]HiveOperation{op}, wif)
 }
 
 type customJsonOperation struct {

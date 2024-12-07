@@ -101,3 +101,11 @@ func TestSerializeOpCustomJsonOperation(t *testing.T) {
 		t.Error("Expected", expected, "got", got)
 	}
 }
+
+func TestSerializeOpAccountUpdateOperation(t *testing.T) {
+	got, _ := getTestAccountUpdateOp().SerializeOp()
+	expected := []byte{10, 12, 115, 110, 105, 112, 101, 114, 100, 117, 101, 108, 49, 55, 0, 0, 0, 2, 248, 203, 193, 109, 141, 110, 237, 126, 105, 254, 86, 201, 65, 157, 81, 189, 244, 224, 193, 227, 202, 141, 140, 24, 154, 173, 150, 112, 27, 195, 12, 77, 13, 123, 34, 102, 111, 111, 34, 58, 34, 98, 97, 114, 34, 125}
+	if !bytes.Equal(got, expected) {
+		t.Error("Expected", expected, "got", got)
+	}
+}
